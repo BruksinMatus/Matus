@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bruksin Predict</title> 
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #e0f7fa;
+            text-align: center;
+            position: relative; /* Sabit metin için gerekli */
+        }
+
+        .game-container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h1 {
+            color: #00796b;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            font-size: 1.2em;
+            width: 80px;
+            border: 2px solid #00bcd4;
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1.1em;
+            background-color: #00bcd4;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0097a7;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 1.2em;
+            min-height: 30px;
+        }
+
+        .guess-count {
+            margin-top: 15px;
+            color: #666;
+        }
+
+        /* Yeni Eklenen Stil: Sağ Alt Köşe Metni */
+        .footer-credit {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            color: #888;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 5px;
+            z-index: 10; /* Diğer elementlerin üzerinde kalmasını sağlar */
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <h1>Bruksin Predict</h1>
+    
+    <p>1 ile 100 arasında bir sayı tuttum. Tahmin et!</p>
+    
+    <input type="number" id="guessInput" min="1" max="100">
+    <button onclick="checkGuess()">Tahmin Et</button>
+    
+    <div id="result"></div>
+    <p class="guess-count">Kalan Hakkınız: <span id="remainingGuesses">10</span></p>
+</div>
+
+<div class="footer-credit">
+    Bruksin Matus
+</div>
+
+<script>
+    // 1 ile 100 arasında rastgele bir sayı oluşturur
+    let randomNumber = Math.floor(Math.random() * 100) + 1;
+    let guessesLeft = 10; // Başlangıçta 10 tahmin hakkı
+
+    const guessInput = document.getElementById('guessInput');
+    const resultDisplay = document.getElementById('result');
+    const remainingGuessesDisplay = document.getElementById('remainingGuesses');
+
+    function checkGuess() {
+        const userGuess = parseInt(guessInput.value);
+
+        if (isNaN(userGuess) || userGuess < 1 || userGuess > 100) {
+            resultDisplay.textContent = "Lütfen 1-100 arasında geçerli bir sayı giriniz!";
+            resultDisplay.style.color = '#d9534f';
+            return;
+        }
+
+        guessesLeft--;
+        remainingGuessesDisplay.textContent = guessesLeft;
+
+        if (userGuess === randomNumber) {
+            resultDisplay.textContent = `Tebrikler! Sayı ${randomNumber} idi. Kazandınız!`;
+            resultDisplay.style.color = '#5cb85c';
+            gameOver();
+        } else if (guessesLeft === 0) {
+            resultDisplay.textContent = `Oyun Bitti! Sayı ${randomNumber} idi. Bir daha dene.`;
+            resultDisplay.style.color = '#d9534f';
+            gameOver();
+        } else if (userGuess < randomNumber) {
+            resultDisplay.textContent = "Daha Yüksek ⬆️ tahmin etmelisin.";
+            resultDisplay.style.color = '#f0ad4e';
+        } else {
+            resultDisplay.textContent = "Daha Düşük ⬇️ tahmin etmelisin.";
+            resultDisplay.style.color = '#f0ad4e';
+        }
+    }
+
+    // Oyun bittiğinde giriş ve butonu devre dışı bırakır
+    function gameOver() {
+        guessInput.disabled = true;
+        document.querySelector('button').textContent = "Yeniden Başla";
+        document.querySelector('button').onclick = resetGame;
+    }
+
+    // Oyunu yeniden başlatır
+    function resetGame() {
+        randomNumber = Math.floor(Math.random() * 100) + 1;
+        guessesLeft = 10;
+        
+        guessInput.value = '';
+        guessInput.disabled = false;
+        remainingGuessesDisplay.textContent = guessesLeft;
+        resultDisplay.textContent = '';
+        
+        document.querySelector('button').textContent = "Tahmin Et";
+        document.querySelector('button').onclick = checkGuess;
+    }
+</script>
+
+</body>
+</html>
