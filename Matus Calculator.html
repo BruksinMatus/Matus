@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matus Calculator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+            position: relative; /* Sabit metin için gerekli */
+        }
+
+        .calculator {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            width: 300px;
+        }
+
+        /* Yeni Eklenen Stil: Başlık */
+        .calculator h2 {
+            color: #f8981d; /* Turuncu renk */
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        #display {
+            width: 100%;
+            height: 60px;
+            background-color: #555;
+            color: white;
+            border: none;
+            text-align: right;
+            padding: 10px;
+            font-size: 2em;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            padding: 20px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #e0e0e0;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #ccc;
+        }
+
+        .operator {
+            background-color: #f8981d;
+            color: white;
+        }
+
+        .operator:hover {
+            background-color: #e6860d;
+        }
+
+        .clear {
+            background-color: #d9534f;
+            color: white;
+        }
+
+        .clear:hover {
+            background-color: #c9302c;
+        }
+
+        .equals {
+            background-color: #5cb85c;
+            color: white;
+            grid-column: span 2;
+        }
+
+        .equals:hover {
+            background-color: #4cae4c;
+        }
+
+        /* Yeni Eklenen Stil: Sağ Alt Köşe Metni */
+        .footer-credit {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            color: #888;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator">
+    <h2>Matus Calculator</h2>
+    
+    <input type="text" id="display" disabled value="0">
+    <div class="buttons">
+        <button class="clear" onclick="clearDisplay()">AC</button>
+        <button class="operator" onclick="appendToDisplay('/')">/</button>
+        <button class="operator" onclick="appendToDisplay('*')">x</button>
+        <button onclick="appendToDisplay('7')">7</button>
+        <button onclick="appendToDisplay('8')">8</button>
+        <button onclick="appendToDisplay('9')">9</button>
+        <button class="operator" onclick="appendToDisplay('-')">-</button>
+        <button onclick="appendToDisplay('4')">4</button>
+        <button onclick="appendToDisplay('5')">5</button>
+        <button onclick="appendToDisplay('6')">6</button>
+        <button class="operator" onclick="appendToDisplay('+')">+</button>
+        <button onclick="appendToDisplay('1')">1</button>
+        <button onclick="appendToDisplay('2')">2</button>
+        <button onclick="appendToDisplay('3')">3</button>
+        <button onclick="appendToDisplay('0')">0</button>
+        <button onclick="appendToDisplay('.')">.</button>
+        <button class="equals" onclick="calculateResult()">=</button>
+    </div>
+</div>
+
+<div class="footer-credit">
+    Bruksin Matus
+</div>
+
+<script>
+    const display = document.getElementById('display');
+
+    // Sayı veya operatörü ekrana ekler
+    function appendToDisplay(value) {
+        if (display.value === '0' && value !== '.') {
+            display.value = value;
+        } else {
+            const lastChar = display.value.slice(-1);
+            const isOperator = (char) => ['+', '-', '*', '/'].includes(char);
+            
+            if (isOperator(lastChar) && isOperator(value)) {
+                display.value = display.value.slice(0, -1) + value;
+            } else {
+                display.value += value;
+            }
+        }
+    }
+
+    // Ekranı temizler
+    function clearDisplay() {
+        display.value = '0';
+    }
+
+    // Hesaplamayı yapar
+    function calculateResult() {
+        try {
+            // Güvenli ve doğru hesaplama için Function constructor kullanılır.
+            let result = new Function('return ' + display.value)();
+            
+            // Eğer sonuç bir tamsayı değilse, maksimum 10 ondalık basamağa yuvarlar
+            if (result % 1 !== 0) {
+                result = parseFloat(result.toFixed(10));
+            }
+
+            display.value = result;
+        } catch (e) {
+            display.value = 'Hata';
+        }
+    }
+</script>
+
+</body>
+</html>
